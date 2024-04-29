@@ -1,6 +1,6 @@
 SERVER = 'localhost'
-DATABASE_OP = "phygital"
+DATABASE_OP = "PhygitalDB"
 DATABASE_DWH = "phygital_dwh"
-USERNAME = "admin"
+USERNAME = "postgres"
 PASSWORD = "admin"
-DRIVER = "ODBC Driver 18 for SQL Server"
+PORT = 5446
