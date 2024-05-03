@@ -1,0 +1,6 @@
+# python
+ETL/venv/
+ETL/__pycache__/
+
+# INTELIJ
+.idea/
