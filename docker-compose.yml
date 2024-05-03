@@ -1,11 +1,12 @@
 version: '3.1'
 services:
   postgres_phygital_dwh:
-    image: postgres:16.1-alpine
+    image: postgres
     restart: always
     environment:
-      POSTGRES_DB: 'phygital_dwh'
-      POSTGRES_USER: 'admin'
+      POSTGRES_DB: 'phygital_server'
       POSTGRES_PASSWORD: 'admin'
     ports:
-        - '5557:5432'
+        - '5446:5432'
+    volumes:
+        - 'pgdata:/var/lib/postgresql/data'
