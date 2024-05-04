@@ -21,16 +21,6 @@ CREATE TABLE IF NOT EXISTS users (
                                                     ((ARRAY ['ADMIN'::character varying, 'MANAGER'::character varying, 'SUPERVISOR'::character varying])::text[]))
 );
 
--- Create the installations table
-                             CREATE TABLE IF NOT EXISTS installations (
-    id SERIAL PRIMARY KEY,
-    is_running BOOLEAN NOT NULL,
-    location_id INT NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (location_id) REFERENCES locations(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
 -- Create the project table
 CREATE TABLE IF NOT EXISTS project (
                                        id SERIAL PRIMARY KEY,
@@ -38,6 +28,27 @@ CREATE TABLE IF NOT EXISTS project (
                                        active BOOLEAN NOT NULL,
                                        avg_time_spent REAL NOT NULL,
                                        total_participants INT NOT NULL
+);
+
+-- Create the installations table
+CREATE TABLE IF NOT EXISTS installations (
+    id SERIAL PRIMARY KEY,
+    is_running BOOLEAN NOT NULL,
+    location_id INT NOT NULL,
+    user_id INT NOT NULL,
+    project_id INT NOT NULL,
+    FOREIGN KEY (location_id) REFERENCES locations(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (project_id) REFERENCES project(id)
+);
+
+-- Create the theme table
+CREATE TABLE IF NOT EXISTS theme (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    information VARCHAR(255) NOT NULL,
+    project_id INT NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES project(id)
 );
 
 -- Create the flow table with new columns
@@ -66,10 +77,6 @@ CREATE TABLE IF NOT EXISTS sharing_platform (
                                                 administrator_id INT NOT NULL,
                                                 FOREIGN KEY (administrator_id) REFERENCES administrator(id)
 );
-
-
-
-
 
 -- Create the sub_theme table
 CREATE TABLE IF NOT EXISTS sub_theme (
