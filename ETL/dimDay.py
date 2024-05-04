@@ -1,7 +1,8 @@
-import dwh_tools as dwh
 import pandas as pd
-from config import DATABASE_DWH, DATABASE_OP, PASSWORD, PORT, SERVER, USERNAME
 from tqdm import tqdm
+
+import dwh_tools as dwh
+from config import DATABASE_DWH, DATABASE_OP, PASSWORD, PORT, SERVER, USERNAME
 
 holidays_in_days_of_year = [
     303, 304, 305, 306, 307, 308, 309,  # Autumn vacation
@@ -104,7 +105,7 @@ def main():
     cursor_dwh = conn_dwh.cursor()
 
     #Check if the dimDay table exists in the DWH. If not, create it.
-    cursor_dwh.execute("SELECT * FROM information_schema.tables WHERE table_name = 'dimDay'")
+    cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimDay'")
     table_exists = cursor_dwh.fetchone()
     if not table_exists:
         create_dimDay(cursor_dwh)

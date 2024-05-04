@@ -1,23 +1,23 @@
-import dwh_tools as dwh
-import pandas as pd
-from config import DATABASE_DWH, DATABASE_OP, PASSWORD, PORT, SERVER, USERNAME
 from tqdm import tqdm
+
+import dwh_tools as dwh
+from config import DATABASE_DWH, DATABASE_OP, PASSWORD, PORT, SERVER, USERNAME
 
 
 def create_dimFlow(cursor_dwh):
     sql = """
-    CREATE TABLE create_dimFlow
+    CREATE TABLE dimFlow (
     flowDim_sk SERIAL PRIMARY KEY,
     theme VARCHAR(255)
+    );
     """
     cursor_dwh.execute(sql)
     print("dimFlow table created in the DWH.")
 
 def get_theme_from_flows_project(cursor_op):
-    sql = """"
-    SELECT theme
-    FROM theme t
-    JOIN project_id p ON t.project_id = p.project_id
+    sql = """
+    SELECT name
+    FROM sub_theme t
     """
 
     cursor_op.execute(sql)
@@ -38,11 +38,11 @@ def fill_dimFlow(cursor_dwh, theme):
             cursor_dwh.execute(f"""
             SELECT theme
             FROM dimFlow
-            WHERE theme = '{t}'
+            WHERE theme = '{t[0]}'
             """)
             if cursor_dwh.fetchone():
-                t += pd.Timedelta(days=1)
                 continue
+
             cursor_dwh.execute(sql, t)
             records_inserted += 1
             pbar.update(1)
@@ -56,7 +56,7 @@ def main():
     conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
     cursor_dwh = conn_dwh.cursor()
 
-    cursor_dwh.execute("SELECT * FROM information_schema.tables WHERE table_name = 'dimFlow'")
+    cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimFlow'")
     table_exists = cursor_dwh.fetchone()
     if not table_exists:
         create_dimFlow(cursor_dwh)
