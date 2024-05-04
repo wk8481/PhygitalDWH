@@ -1,6 +1,7 @@
 # python
 ETL/venv/
 ETL/__pycache__/
+ETL/.pylintrc
 
 # INTELIJ
 .idea/

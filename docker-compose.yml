@@ -7,6 +7,6 @@ services:
       POSTGRES_DB: 'phygital_server'
       POSTGRES_PASSWORD: 'admin'
     ports:
-        - '5446:5432'
+        - '5448:5432'
     volumes:
-        - 'pgdata:/var/lib/postgresql/data'
+        - './pgdata:/var/lib/postgresql/data'
