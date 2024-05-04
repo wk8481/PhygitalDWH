@@ -2,6 +2,7 @@
 ETL/venv/
 ETL/__pycache__/
 ETL/.pylintrc
+pgdata/
 
 # INTELIJ
 .idea/
