@@ -10,7 +10,7 @@ def create_dimLocation(cursor):
         locationDim_sk SERIAL PRIMARY KEY,
         city VARCHAR(255),
         street VARCHAR(255),
-        number INT,
+        street_number INT,
         province VARCHAR(255)
     )
     """
@@ -19,8 +19,8 @@ def create_dimLocation(cursor):
 
 def get_locations(cursor):
     sql = """
-    SELECT city, street, number, province
-    FROM locations
+    SELECT city, street, street_number, province
+    FROM location
     """
     cursor.execute(sql)
     locations = cursor.fetchall()
@@ -28,7 +28,7 @@ def get_locations(cursor):
 
 def fill_dimLocation(cursor, locations):
     sql = """
-    INSERT INTO dimLocation (city, street, number, province)
+    INSERT INTO dimLocation (city, street, street_number, province)
     VALUES (%s, %s, %s, %s)
     """
 
@@ -38,9 +38,9 @@ def fill_dimLocation(cursor, locations):
         for location in locations:
         # Check if the location already exists in the dimLocation table
             cursor.execute(f"""
-                SELECT city, street, number, province
+                SELECT city, street, street_number, province
                 FROM dimLocation
-                WHERE city = '{location[0]}' AND street = '{location[1]}' AND number = {location[2]} AND province = '{location[3]}'
+                WHERE city = '{location[0]}' AND street = '{location[1]}' AND street_number = {location[2]} AND province = '{location[3]}'
                 """)
             if cursor.fetchone():
                 continue
@@ -52,28 +52,32 @@ def fill_dimLocation(cursor, locations):
 
 
 def main():
-    conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
-    cursor_op = conn_op.cursor()
+    try:
+        conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
+        cursor_op = conn_op.cursor()
 
-    conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
-    cursor_dwh = conn_dwh.cursor()
+        conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
+        cursor_dwh = conn_dwh.cursor()
 
-    #Check if the dimLocation table exists in the DWH. If not, create it.
-    cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimLocation'")
-    table_exists = cursor_dwh.fetchone()
-    if not table_exists:
-        create_dimLocation(cursor_dwh)
-    else:
-        print("dimLocation table already exists in the DWH.")
+        #Check if the dimLocation table exists in the DWH. If not, create it.
+        cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimLocation'")
+        table_exists = cursor_dwh.fetchone()
+        if table_exists:
+            create_dimLocation(cursor_dwh)
+        else:
+            print("dimLocation table already exists in the DWH.")
 
-    locations = get_locations(cursor_op)
+        locations = get_locations(cursor_op)
 
-    fill_dimLocation(cursor_dwh, locations)
+        fill_dimLocation(cursor_dwh, locations)
 
-    cursor_op.close
-    cursor_dwh.close
-    conn_op.close
-    conn_dwh.close
+        cursor_op.close
+        cursor_dwh.close
+        conn_op.close
+        conn_dwh.close
+
+    except Exception as e:
+        print("Error:", e)
 
 
 

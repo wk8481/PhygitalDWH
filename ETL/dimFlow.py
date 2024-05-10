@@ -17,7 +17,7 @@ def create_dimFlow(cursor_dwh):
 def get_theme_from_flows_project(cursor_op):
     sql = """
     SELECT name
-    FROM sub_theme t
+    FROM theme
     """
 
     cursor_op.execute(sql)
@@ -50,27 +50,31 @@ def fill_dimFlow(cursor_dwh, theme):
 
 
 def main():
-    conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
-    cursor_op = conn_op.cursor()
+    try:
+        conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
+        cursor_op = conn_op.cursor()
 
-    conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
-    cursor_dwh = conn_dwh.cursor()
+        conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
+        cursor_dwh = conn_dwh.cursor()
 
-    cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimFlow'")
-    table_exists = cursor_dwh.fetchone()
-    if not table_exists:
-        create_dimFlow(cursor_dwh)
-    else:
-        print("dimFlow table already exists in the DWH.")
+        cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimFlow'")
+        table_exists = cursor_dwh.fetchone()
+        if table_exists:
+            create_dimFlow(cursor_dwh)
+        else:
+            print("dimFlow table already exists in the DWH.")
 
-    theme = get_theme_from_flows_project(cursor_op)
+        theme = get_theme_from_flows_project(cursor_op)
 
-    fill_dimFlow(cursor_dwh, theme)
+        fill_dimFlow(cursor_dwh, theme)
 
-    cursor_op.close
-    cursor_dwh.close
-    conn_op.close
-    conn_dwh.close
+        cursor_op.close
+        cursor_dwh.close
+        conn_op.close
+        conn_dwh.close
+
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     main()

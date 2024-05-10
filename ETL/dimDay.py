@@ -37,9 +37,8 @@ def create_dimDay(cursor_dwh):
 
 def get_flow_day(cursor_op):
     sql = """
-    SELECT MIN(start_date)
-    FROM flow
-    """
+SELECT date_trunc('day', MIN(start_time))
+FROM flow    """
 
     cursor_op.execute(sql)
     return cursor_op.fetchone()[0]
@@ -98,28 +97,33 @@ def fill_dimDay(cursor_dwh, flow_date):
 
 
 def main():
-    conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
-    cursor_op = conn_op.cursor()
+    try:
 
-    conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
-    cursor_dwh = conn_dwh.cursor()
+        conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
+        cursor_op = conn_op.cursor()
 
-    #Check if the dimDay table exists in the DWH. If not, create it.
-    cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimDay'")
-    table_exists = cursor_dwh.fetchone()
-    if not table_exists:
-        create_dimDay(cursor_dwh)
-    else:
-        print("dimDay table already exists in the DWH.")
+        conn_dwh = dwh.establish_connection(SERVER, DATABASE_DWH, USERNAME, PASSWORD, PORT)
+        cursor_dwh = conn_dwh.cursor()
 
-    flow_date = get_flow_day(cursor_op)
+        #Check if the dimDay table exists in the DWH. If not, create it.
+        cursor_dwh.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dimDay'")
+        table_exists = cursor_dwh.fetchone()
+        if table_exists:
+            create_dimDay(cursor_dwh)
+        else:
+            print("dimDay table already exists in the DWH.")
 
-    fill_dimDay(cursor_dwh, flow_date)
+        flow_date = get_flow_day(cursor_op)
 
-    cursor_op.close
-    cursor_dwh.close
-    conn_op.close
-    conn_dwh.close
+        fill_dimDay(cursor_dwh, flow_date)
+
+        cursor_op.close
+        cursor_dwh.close
+        conn_op.close
+        conn_dwh.close
+
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     main()
