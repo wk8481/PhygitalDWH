@@ -105,7 +105,7 @@ def check_user_engagement(cursor_dwh, day_dim_sk, flow_dim_sk, location_dim_sk, 
 
 def fill_fact_table(cursor_dwh, day_dim_sk, flow_dim_sk, location_dim_sk, duration, total_questions, answered_questions):
     sql = """
-    INSERT INTO UserEngagement (dayDim_sk, flowDim_sk, locationDim_sk, duration, numberOfQuestions, numberOfAnsweredQuestion)
+    INSERT INTO factUserEngagement (dayDim_sk, flowDim_sk, locationDim_sk, duration, numberOfQuestions, numberOfAnsweredQuestion)
     VALUES (%s, %s, %s, %s, %s, %s)
     """
     cursor_dwh.execute(sql, (day_dim_sk, flow_dim_sk, location_dim_sk, duration, total_questions, answered_questions))
