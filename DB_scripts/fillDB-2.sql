@@ -104,8 +104,8 @@ SELECT
     series_id, -- installation_id
     series_id % 2 = 0, -- is_circular
     series_id, -- project_id
-    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days', -- end_time
-    CURRENT_TIMESTAMP + RANDOM() * INTERVAL '365 days', -- start_time
+    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' * RANDOM(), -- end_time
+    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '730 days' * RANDOM(), -- start_time (twice as far in the past as end_time)
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
         WHEN 1 THEN 'Innovation Summit ' || series_id
@@ -114,6 +114,7 @@ SELECT
         ELSE 'Healthcare Access Conference ' || series_id
         END -- name
 FROM generate_series(1, 1000) AS series_id;
+
 
 --subtheme
 INSERT INTO public.sub_theme (current_index, flow_id, is_visible, information, name)
@@ -338,7 +339,7 @@ FROM generate_series(1, 1000) AS series_id;
 INSERT INTO public.answer (subtheme_id, timestamp, answers, questions)
 SELECT
     series_id AS subtheme_id, -- Subtheme_id ranges from 1 to 1000
-    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' AS timestamp, -- Random timestamp within the past year
+    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' * RANDOM(), -- Random timestamp within the past year
     CASE
         WHEN (series_id % 20) = 0 THEN
             'I believe renewable energy sources are essential for a sustainable future.'

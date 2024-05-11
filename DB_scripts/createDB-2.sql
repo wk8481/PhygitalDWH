@@ -13,17 +13,17 @@ create table if not exists public.project
 
 create table if not exists public.flow
 (
-    id              serial
-        primary key,
+    id              serial primary key,
     installation_id integer,
     is_circular     boolean not null,
     project_id      integer not null
         constraint fkb4rl1klmcfreuj9g4x0rsfub6
             references public.project,
-    end_time        timestamp(6),
-    start_time      timestamp(6),
+    end_time        timestamp(6) check (end_time <= CURRENT_TIMESTAMP),
+    start_time      timestamp(6) check (start_time <= CURRENT_TIMESTAMP),
     name            varchar(255)
 );
+
 
 create table if not exists public.location
 (
@@ -117,14 +117,13 @@ alter table public.flow
 
 create table if not exists public.answer
 (
-    id          serial
-        primary key,
-    subtheme_id integer
-        unique
+    id          serial primary key,
+    subtheme_id integer unique
         constraint fkrje4k4gtv2maq1h99ts7uce23
             references public.sub_theme,
-    timestamp   timestamp(6),
+    timestamp   timestamp(6) check (timestamp <= CURRENT_TIMESTAMP),
     answers     varchar(255),
     questions   varchar(255)
 );
+
 
