@@ -95,7 +95,7 @@ def get_location_dim_sk(cursor_dwh, city, province, street, street_number):
 def check_user_engagement(cursor_dwh, day_dim_sk, flow_dim_sk, location_dim_sk, duration, total_questions, answered_questions):
     sql = f"""
     SELECT *
-    FROM UserEngagement
+    FROM factUserEngagement
     WHERE dayDim_sk = %s AND flowDim_sk = %s AND locationDim_sk = %s AND duration = %s AND numberOfQuestions = %s AND numberOfAnsweredQuestion = %s
     """
     cursor_dwh.execute(sql, (day_dim_sk, flow_dim_sk, location_dim_sk, duration, total_questions, answered_questions))
