@@ -1,8 +1,7 @@
--- Sample projects
 INSERT INTO public.project (active, avg_time_spent, total_participants, background_color_hex, font_name, logo_path, name)
 SELECT
     (series_id % 2) = 0, -- active
-    RANDOM() * 10, -- avg_time_spent
+    ROUND(RANDOM() * 40 + 20), -- avg_time_spent (random value between 20 and 60)
     FLOOR(RANDOM() * 100) + 1, -- total_participants (random value between 1 and 100)
     CASE (series_id % 5)
         WHEN 0 THEN '#5BC0EB'
@@ -139,55 +138,258 @@ SELECT
 FROM generate_series(1, 1000) AS series_id;
 
 --flow_sub_themes
-INSERT INTO public.flow_sub_themes (flow_id, sub_themes_id)
+-- Inserting into public.flow with reasonable timestamp ranges
+INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
 SELECT
-    series_id, -- flow_id
-    series_id -- sub_themes_id
+    series_id, -- installation_id
+    series_id % 2 = 0, -- is_circular
+    series_id, -- project_id
+    CURRENT_TIMESTAMP - INTERVAL '1' YEAR - (RANDOM() * INTERVAL '365 days'), -- end_time (within the past year)
+    CURRENT_TIMESTAMP - INTERVAL '1' YEAR - (RANDOM() * INTERVAL '365 days'), -- start_time (within the past year)
+    CASE (series_id % 5)
+        WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
+        WHEN 1 THEN 'Innovation Summit ' || series_id
+        WHEN 2 THEN 'Cultural Exchange Exhibition ' || series_id
+        WHEN 3 THEN 'Educational Access Seminar ' || series_id
+        ELSE 'Healthcare Access Conference ' || series_id
+        END -- name
 FROM generate_series(1, 1000) AS series_id;
 
---questions
+--
+-- --questions
+-- INSERT INTO public.question (is_visible, sub_theme_id, text, type)
+-- SELECT
+--     (series_id % 2 = 0) AS is_visible,
+--     (series_id % 1000) + 1 AS sub_theme_id,
+--     CASE
+--         WHEN (series_id % 5) = 0 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'What is your opinion on renewable energy sources?'
+--                 WHEN series_id % 4 = 1 THEN 'Which renewable energy source do you think is most promising for our community?'
+--                 WHEN series_id % 4 = 2 THEN 'How important do you think sustainability is for our future?'
+--                 ELSE 'Do you actively participate in eco-friendly practices?'
+--                 END
+--         WHEN (series_id % 5) = 1 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'What technology do you believe can have the biggest impact on society?'
+--                 WHEN series_id % 4 = 1 THEN 'Which industry do you think needs technological innovation the most?'
+--                 WHEN series_id % 4 = 2 THEN 'How comfortable are you with using new technologies?'
+--                 ELSE 'Have you ever participated in a hackathon or similar event?'
+--                 END
+--         WHEN (series_id % 5) = 2 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'What cultural aspect do you believe is most important to preserve?'
+--                 WHEN series_id % 4 = 1 THEN 'Which form of art do you find most expressive?'
+--                 WHEN series_id % 4 = 2 THEN 'How often do you engage with different cultures?'
+--                 ELSE 'Have you ever participated in an international exchange program?'
+--                 END
+--         WHEN (series_id % 5) = 3 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'What do you think is the biggest challenge in education today?'
+--                 WHEN series_id % 4 = 1 THEN 'Which educational method do you find most effective?'
+--                 WHEN series_id % 4 = 2 THEN 'How satisfied are you with the current education system?'
+--                 ELSE 'Have you ever volunteered as a tutor or mentor?'
+--                 END
+--         ELSE
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'What improvements would you like to see in healthcare services?'
+--                 WHEN series_id % 4 = 1 THEN 'Which aspect of healthcare accessibility concerns you the most?'
+--                 WHEN series_id % 4 = 2 THEN 'How satisfied are you with your current healthcare coverage?'
+--                 ELSE 'Have you ever participated in a medical mission or volunteer work?'
+--                 END
+--         END AS text,
+--     CASE series_id % 4
+--         WHEN 0 THEN 'SINGLE_CHOICE'
+--         WHEN 1 THEN 'MULTIPLE_CHOICE'
+--         WHEN 2 THEN 'RANGE'
+--         ELSE 'OPEN'
+--         END AS type
+-- FROM generate_series(1, 1000) AS series_id;
+--
+-- --possible_answers
+-- INSERT INTO public.possible_answers (question_id, answer)
+-- SELECT
+--     series_id AS question_id,
+--     CASE
+--         WHEN (series_id % 20) = 0 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'I believe renewable energy sources are essential for a sustainable future.'
+--                 WHEN series_id % 4 = 1 THEN 'Renewable energy sources are the key to reducing carbon emissions.'
+--                 WHEN series_id % 4 = 2 THEN 'Solar energy'
+--                 ELSE 'Wind energy'
+--                 END
+--         WHEN (series_id % 20) = 1 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Hydropower'
+--                 WHEN series_id % 4 = 1 THEN 'Geothermal energy'
+--                 WHEN series_id % 4 = 2 THEN 'Extremely important'
+--                 ELSE 'Very important'
+--                 END
+--         WHEN (series_id % 20) = 2 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Moderately important'
+--                 WHEN series_id % 4 = 1 THEN 'Slightly important'
+--                 WHEN series_id % 4 = 2 THEN 'Not important at all'
+--                 ELSE 'Using public transportation'
+--                 END
+--         WHEN (series_id % 20) = 3 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Reducing plastic usage'
+--                 WHEN series_id % 4 = 1 THEN 'Conserving water'
+--                 WHEN series_id % 4 = 2 THEN 'Recycling waste materials'
+--                 ELSE 'Artificial Intelligence'
+--                 END
+--         WHEN (series_id % 20) = 4 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Internet of Things (IoT)'
+--                 WHEN series_id % 4 = 1 THEN 'Blockchain'
+--                 WHEN series_id % 4 = 2 THEN 'Augmented Reality/Virtual Reality (AR/VR)'
+--                 ELSE 'Healthcare'
+--                 END
+--         WHEN (series_id % 20) = 5 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Education'
+--                 WHEN series_id % 4 = 1 THEN 'Finance'
+--                 WHEN series_id % 4 = 2 THEN 'Transportation'
+--                 ELSE 'Very comfortable'
+--                 END
+--         WHEN (series_id % 20) = 6 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Comfortable'
+--                 WHEN series_id % 4 = 1 THEN 'Neutral'
+--                 WHEN series_id % 4 = 2 THEN 'Uncomfortable'
+--                 ELSE 'Very uncomfortable'
+--                 END
+--         WHEN (series_id % 20) = 7 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Yes'
+--                 WHEN series_id % 4 = 1 THEN 'No'
+--                 ELSE 'Language preservation'
+--                 END
+--         WHEN (series_id % 20) = 8 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Traditional festivals and celebrations'
+--                 WHEN series_id % 4 = 1 THEN 'Cuisine'
+--                 WHEN series_id % 4 = 2 THEN 'Music and dance'
+--                 ELSE 'Painting'
+--                 END
+--         WHEN (series_id % 20) = 9 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Sculpture'
+--                 WHEN series_id % 4 = 1 THEN 'Literature'
+--                 WHEN series_id % 4 = 2 THEN 'Music'
+--                 ELSE 'Regularly'
+--                 END
+--         WHEN (series_id % 20) = 10 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Occasionally'
+--                 WHEN series_id % 4 = 1 THEN 'Rarely'
+--                 WHEN series_id % 4 = 2 THEN 'Never'
+--                 ELSE 'Yes'
+--                 END
+--         WHEN (series_id % 20) = 11 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'No'
+--                 ELSE 'Access to quality education for all'
+--                 END
+--         WHEN (series_id % 20) = 12 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Inadequate funding for schools'
+--                 WHEN series_id % 4 = 1 THEN 'Lack of access to technology'
+--                 WHEN series_id % 4 = 2 THEN 'Educational inequality'
+--                 ELSE 'Traditional classroom teaching'
+--                 END
+--         WHEN (series_id % 20) = 13 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Hands-on learning experiences'
+--                 WHEN series_id % 4 = 1 THEN 'Online learning platforms'
+--                 WHEN series_id % 4 = 2 THEN 'Group discussions and collaboration'
+--                 ELSE 'Very satisfied'
+--                 END
+--         WHEN (series_id % 20) = 14 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Satisfied'
+--                 WHEN series_id % 4 = 1 THEN 'Neutral'
+--                 WHEN series_id % 4 = 2 THEN 'Dissatisfied'
+--                 ELSE 'Very dissatisfied'
+--                 END
+--         WHEN (series_id % 20) = 15 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Yes'
+--                 ELSE 'Better access to primary care services'
+--                 END
+--         WHEN (series_id % 20) = 16 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Reducing waiting times for appointments'
+--                 WHEN series_id % 4 = 1 THEN 'Improving access to specialist care'
+--                 WHEN series_id % 4 = 2 THEN 'Enhancing telemedicine services'
+--                 ELSE 'Affordability of healthcare services'
+--                 END
+--         WHEN (series_id % 20) = 17 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Geographical accessibility to healthcare facilities'
+--                 WHEN series_id % 4 = 1 THEN 'Quality of healthcare services'
+--                 WHEN series_id % 4 = 2 THEN 'Cultural and language barriers'
+--                 ELSE 'Very satisfied'
+--                 END
+--         WHEN (series_id % 20) = 18 THEN
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Satisfied'
+--                 WHEN series_id % 4 = 1 THEN 'Neutral'
+--                 WHEN series_id % 4 = 2 THEN 'Dissatisfied'
+--                 ELSE 'Very dissatisfied'
+--                 END
+--         ELSE
+--             CASE
+--                 WHEN series_id % 4 = 0 THEN 'Yes'
+--                 ELSE 'No'
+--                 END
+--         END AS answer
+-- FROM generate_series(1, 1000) AS series_id;
+--
+-- INSERT INTO public.answer (subtheme_id, timestamp, answers, questions)
+-- SELECT
+--     series_id AS subtheme_id, -- Subtheme_id ranges from 1 to 1000
+--     CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' * RANDOM(), -- Random timestamp within the past year
+--     CASE
+--         WHEN (series_id % 20) = 0 THEN
+--             'I believe renewable energy sources are essential for a sustainable future.'
+--         WHEN (series_id % 20) = 1 THEN
+--             'Artificial Intelligence'
+--         WHEN (series_id % 20) = 2 THEN
+--             'Language preservation'
+--         WHEN (series_id % 20) = 3 THEN
+--             'Access to quality education for all'
+--         WHEN (series_id % 20) = 4 THEN
+--             'Better access to primary care services'
+--         ELSE
+--             (SELECT answer
+--              FROM public.possible_answers
+--              WHERE question_id = (series_id % 20) + 1 -- Ensure question_id ranges from 1 to 20
+--              ORDER BY RANDOM()
+--              LIMIT 1) -- Select a random answer from the possible answers for the corresponding question
+--         END AS answers,
+--     (SELECT text
+--      FROM public.question
+--      WHERE public.question.id = (series_id % 20) + 1 -- Ensure question_id ranges from 1 to 20
+--     ) AS questions
+-- FROM generate_series(1, 1000) AS series_id;
+
+
+--increase amount of questions and answers:
+-- Insert multiple questions for each theme
 INSERT INTO public.question (is_visible, sub_theme_id, text, type)
 SELECT
-    (series_id % 2 = 0) AS is_visible,
-    (series_id % 1000) + 1 AS sub_theme_id,
+    true AS is_visible,
+    series_id AS sub_theme_id,
     CASE
-        WHEN (series_id % 5) = 0 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'What is your opinion on renewable energy sources?'
-                WHEN series_id % 4 = 1 THEN 'Which renewable energy source do you think is most promising for our community?'
-                WHEN series_id % 4 = 2 THEN 'How important do you think sustainability is for our future?'
-                ELSE 'Do you actively participate in eco-friendly practices?'
-                END
-        WHEN (series_id % 5) = 1 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'What technology do you believe can have the biggest impact on society?'
-                WHEN series_id % 4 = 1 THEN 'Which industry do you think needs technological innovation the most?'
-                WHEN series_id % 4 = 2 THEN 'How comfortable are you with using new technologies?'
-                ELSE 'Have you ever participated in a hackathon or similar event?'
-                END
-        WHEN (series_id % 5) = 2 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'What cultural aspect do you believe is most important to preserve?'
-                WHEN series_id % 4 = 1 THEN 'Which form of art do you find most expressive?'
-                WHEN series_id % 4 = 2 THEN 'How often do you engage with different cultures?'
-                ELSE 'Have you ever participated in an international exchange program?'
-                END
-        WHEN (series_id % 5) = 3 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'What do you think is the biggest challenge in education today?'
-                WHEN series_id % 4 = 1 THEN 'Which educational method do you find most effective?'
-                WHEN series_id % 4 = 2 THEN 'How satisfied are you with the current education system?'
-                ELSE 'Have you ever volunteered as a tutor or mentor?'
-                END
-        ELSE
-            CASE
-                WHEN series_id % 4 = 0 THEN 'What improvements would you like to see in healthcare services?'
-                WHEN series_id % 4 = 1 THEN 'Which aspect of healthcare accessibility concerns you the most?'
-                WHEN series_id % 4 = 2 THEN 'How satisfied are you with your current healthcare coverage?'
-                ELSE 'Have you ever participated in a medical mission or volunteer work?'
-                END
+        WHEN (series_id % 5) = 0 THEN 'Question 1 for Subtheme ' || series_id
+        WHEN (series_id % 5) = 1 THEN 'Question 2 for Subtheme ' || series_id
+        WHEN (series_id % 5) = 2 THEN 'Question 3 for Subtheme ' || series_id
+        WHEN (series_id % 5) = 3 THEN 'Question 4 for Subtheme ' || series_id
+        ELSE 'Question 5 for Subtheme ' || series_id
         END AS text,
-    CASE series_id % 4
+    CASE (series_id % 4)
         WHEN 0 THEN 'SINGLE_CHOICE'
         WHEN 1 THEN 'MULTIPLE_CHOICE'
         WHEN 2 THEN 'RANGE'
@@ -195,171 +397,34 @@ SELECT
         END AS type
 FROM generate_series(1, 1000) AS series_id;
 
---possible_answers
+-- Insert multiple possible answers for each question
 INSERT INTO public.possible_answers (question_id, answer)
 SELECT
     series_id AS question_id,
     CASE
-        WHEN (series_id % 20) = 0 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'I believe renewable energy sources are essential for a sustainable future.'
-                WHEN series_id % 4 = 1 THEN 'Renewable energy sources are the key to reducing carbon emissions.'
-                WHEN series_id % 4 = 2 THEN 'Solar energy'
-                ELSE 'Wind energy'
-                END
-        WHEN (series_id % 20) = 1 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Hydropower'
-                WHEN series_id % 4 = 1 THEN 'Geothermal energy'
-                WHEN series_id % 4 = 2 THEN 'Extremely important'
-                ELSE 'Very important'
-                END
-        WHEN (series_id % 20) = 2 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Moderately important'
-                WHEN series_id % 4 = 1 THEN 'Slightly important'
-                WHEN series_id % 4 = 2 THEN 'Not important at all'
-                ELSE 'Using public transportation'
-                END
-        WHEN (series_id % 20) = 3 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Reducing plastic usage'
-                WHEN series_id % 4 = 1 THEN 'Conserving water'
-                WHEN series_id % 4 = 2 THEN 'Recycling waste materials'
-                ELSE 'Artificial Intelligence'
-                END
-        WHEN (series_id % 20) = 4 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Internet of Things (IoT)'
-                WHEN series_id % 4 = 1 THEN 'Blockchain'
-                WHEN series_id % 4 = 2 THEN 'Augmented Reality/Virtual Reality (AR/VR)'
-                ELSE 'Healthcare'
-                END
-        WHEN (series_id % 20) = 5 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Education'
-                WHEN series_id % 4 = 1 THEN 'Finance'
-                WHEN series_id % 4 = 2 THEN 'Transportation'
-                ELSE 'Very comfortable'
-                END
-        WHEN (series_id % 20) = 6 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Comfortable'
-                WHEN series_id % 4 = 1 THEN 'Neutral'
-                WHEN series_id % 4 = 2 THEN 'Uncomfortable'
-                ELSE 'Very uncomfortable'
-                END
-        WHEN (series_id % 20) = 7 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Yes'
-                WHEN series_id % 4 = 1 THEN 'No'
-                ELSE 'Language preservation'
-                END
-        WHEN (series_id % 20) = 8 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Traditional festivals and celebrations'
-                WHEN series_id % 4 = 1 THEN 'Cuisine'
-                WHEN series_id % 4 = 2 THEN 'Music and dance'
-                ELSE 'Painting'
-                END
-        WHEN (series_id % 20) = 9 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Sculpture'
-                WHEN series_id % 4 = 1 THEN 'Literature'
-                WHEN series_id % 4 = 2 THEN 'Music'
-                ELSE 'Regularly'
-                END
-        WHEN (series_id % 20) = 10 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Occasionally'
-                WHEN series_id % 4 = 1 THEN 'Rarely'
-                WHEN series_id % 4 = 2 THEN 'Never'
-                ELSE 'Yes'
-                END
-        WHEN (series_id % 20) = 11 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'No'
-                ELSE 'Access to quality education for all'
-                END
-        WHEN (series_id % 20) = 12 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Inadequate funding for schools'
-                WHEN series_id % 4 = 1 THEN 'Lack of access to technology'
-                WHEN series_id % 4 = 2 THEN 'Educational inequality'
-                ELSE 'Traditional classroom teaching'
-                END
-        WHEN (series_id % 20) = 13 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Hands-on learning experiences'
-                WHEN series_id % 4 = 1 THEN 'Online learning platforms'
-                WHEN series_id % 4 = 2 THEN 'Group discussions and collaboration'
-                ELSE 'Very satisfied'
-                END
-        WHEN (series_id % 20) = 14 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Satisfied'
-                WHEN series_id % 4 = 1 THEN 'Neutral'
-                WHEN series_id % 4 = 2 THEN 'Dissatisfied'
-                ELSE 'Very dissatisfied'
-                END
-        WHEN (series_id % 20) = 15 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Yes'
-                ELSE 'Better access to primary care services'
-                END
-        WHEN (series_id % 20) = 16 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Reducing waiting times for appointments'
-                WHEN series_id % 4 = 1 THEN 'Improving access to specialist care'
-                WHEN series_id % 4 = 2 THEN 'Enhancing telemedicine services'
-                ELSE 'Affordability of healthcare services'
-                END
-        WHEN (series_id % 20) = 17 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Geographical accessibility to healthcare facilities'
-                WHEN series_id % 4 = 1 THEN 'Quality of healthcare services'
-                WHEN series_id % 4 = 2 THEN 'Cultural and language barriers'
-                ELSE 'Very satisfied'
-                END
-        WHEN (series_id % 20) = 18 THEN
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Satisfied'
-                WHEN series_id % 4 = 1 THEN 'Neutral'
-                WHEN series_id % 4 = 2 THEN 'Dissatisfied'
-                ELSE 'Very dissatisfied'
-                END
-        ELSE
-            CASE
-                WHEN series_id % 4 = 0 THEN 'Yes'
-                ELSE 'No'
-                END
+        WHEN (series_id % 20) = 0 THEN 'Answer 1 for Question ' || series_id
+        WHEN (series_id % 20) = 1 THEN 'Answer 2 for Question ' || series_id
+        WHEN (series_id % 20) = 2 THEN 'Answer 3 for Question ' || series_id
+        WHEN (series_id % 20) = 3 THEN 'Answer 4 for Question ' || series_id
+        ELSE 'Answer 5 for Question ' || series_id
         END AS answer
 FROM generate_series(1, 1000) AS series_id;
 
+-- Insert multiple answered questions for each subtheme
+-- Inserting into public.answer with reasonable timestamp ranges
 INSERT INTO public.answer (subtheme_id, timestamp, answers, questions)
 SELECT
     series_id AS subtheme_id, -- Subtheme_id ranges from 1 to 1000
-    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' * RANDOM(), -- Random timestamp within the past year
-    CASE
-        WHEN (series_id % 20) = 0 THEN
-            'I believe renewable energy sources are essential for a sustainable future.'
-        WHEN (series_id % 20) = 1 THEN
-            'Artificial Intelligence'
-        WHEN (series_id % 20) = 2 THEN
-            'Language preservation'
-        WHEN (series_id % 20) = 3 THEN
-            'Access to quality education for all'
-        WHEN (series_id % 20) = 4 THEN
-            'Better access to primary care services'
-        ELSE
-            (SELECT answer
-             FROM public.possible_answers
-             WHERE question_id = (series_id % 20) + 1 -- Ensure question_id ranges from 1 to 20
-             ORDER BY RANDOM()
-             LIMIT 1) -- Select a random answer from the possible answers for the corresponding question
-        END AS answers,
-    (SELECT text
+    CURRENT_TIMESTAMP - INTERVAL '1' YEAR - (RANDOM() * INTERVAL '365 days'), -- Random timestamp within the past year
+    (SELECT array_to_string(array_agg(answer ORDER BY random()), ', ')
+     FROM (SELECT answer
+           FROM public.possible_answers
+           WHERE question_id IN (SELECT id FROM public.question WHERE sub_theme_id = series_id % 1000 + 1)
+           ORDER BY RANDOM()
+           LIMIT 3) AS t) AS answers,
+    (SELECT array_to_string(array_agg(text ORDER BY random()), ', ')
      FROM public.question
-     WHERE public.question.id = (series_id % 20) + 1 -- Ensure question_id ranges from 1 to 20
-    ) AS questions
+     WHERE sub_theme_id = series_id % 1000 + 1
+     LIMIT 1) AS questions
 FROM generate_series(1, 1000) AS series_id;
+
