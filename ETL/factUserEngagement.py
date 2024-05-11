@@ -7,7 +7,7 @@ from config import DATABASE_DWH, DATABASE_OP, PASSWORD, PORT, SERVER, USERNAME
 
 def create_facttable(cursor_dwh):
     sql = """
-    CREATE TABLE UserEngagement (
+    CREATE TABLE factUserEngagement (
     userEngagement_sk SERIAL PRIMARY KEY,
     dayDim_sk INT NOT NULL,
     flowDim_sk INT NOT NULL,
@@ -112,6 +112,7 @@ def fill_fact_table(cursor_dwh, day_dim_sk, flow_dim_sk, location_dim_sk, durati
     cursor_dwh.connection.commit()
 
 def main():
+
     conn_op = dwh.establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
     cursor_op = conn_op.cursor()
 
@@ -132,7 +133,6 @@ def main():
         for u in user_engagement:
             day_dim_sk = get_day_dim_sk(cursor_dwh, u[0])
             flow_dim_sk = get_flow_dim_sk(cursor_dwh, u[1])
-            print('flow dim data', flow_dim_sk)
             location_dim_sk = get_location_dim_sk(cursor_dwh, u[2], u[3], u[4], u[5])
             if day_dim_sk is None or flow_dim_sk is None or location_dim_sk is None:
                 print('day_dim_sk', day_dim_sk)
