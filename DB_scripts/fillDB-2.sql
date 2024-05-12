@@ -28,14 +28,14 @@ SELECT
     (SELECT array_to_string(array_agg(words ORDER BY random()), ' ')
      FROM (VALUES ('Green'), ('Technology'), ('Innovation'), ('Community'), ('Education'), ('Healthcare'), ('Art'), ('Culture')) AS t(words)
      LIMIT 3) -- random project name
-FROM generate_series(1, 1000) AS series_id;
+FROM generate_series(1, 20) AS series_id;
 
 
 
 -- Sample themes
 INSERT INTO public.theme (project_id, information, name)
 SELECT
-    (series_id % 1000) + 1, -- project_id
+    (series_id % 20) + 1, -- project_id
     CASE (series_id % 5)
         WHEN 0 THEN 'Community-driven projects aimed at sustainable development.'
         WHEN 1 THEN 'Bringing innovation to various sectors for societal progress.'
@@ -50,7 +50,7 @@ SELECT
         WHEN 3 THEN 'Education ' || series_id
         ELSE 'Healthcare ' || series_id
         END -- name
-FROM generate_series(1, 1000) AS series_id;
+FROM generate_series(1, 20) AS series_id;
 
 -- sample data for location
 INSERT INTO public.location (street_number, city, province, street)
@@ -80,14 +80,15 @@ SELECT
         WHEN 8 THEN 'Avenue Louise'
         ELSE 'Chaussee de Wavre'
         END || ' ' || (series_id % 1000) + 1 -- random street name with series_id appended
-FROM generate_series(1, 1000) AS series_id;
+FROM generate_series(1, 50) AS series_id;
 
 --installation
 
+--installation
 INSERT INTO public.installation (is_running, location_id, name)
 SELECT
     series_id % 2 = 0, -- is_running
-    series_id, -- location_id
+    location_id, -- location_id
     CASE (series_id % 5)
         WHEN 0 THEN 'Brussels Workshop Center'
         WHEN 1 THEN 'Antwerp Innovation Hub'
@@ -95,7 +96,13 @@ SELECT
         WHEN 3 THEN 'Liege Education Hub'
         ELSE 'Bruges Healthcare Center'
         END || ' ' || series_id -- Appending series_id to ensure uniqueness
-FROM generate_series(1, 1000) AS series_id;
+FROM (
+    SELECT 
+        (series_id % 50) + 1 as location_id, -- Distribute installations across 50 locations
+        generate_series(1, 400) AS series_id -- Total installations
+    FROM generate_series(1, 400) -- Total installations
+) AS subquery;
+
 
 INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
 SELECT
@@ -120,7 +127,7 @@ FROM generate_series(1, 1000) AS series_id;
 INSERT INTO public.sub_theme (current_index, flow_id, is_visible, information, name)
 SELECT
     series_id % 10, -- current_index
-    series_id, -- flow_id
+    FLOOR((series_id - 1) / 20) + 1, -- flow_id (assuming each flow contains 20 subthemes)
     series_id % 2 = 0, -- is_visible
     CASE (series_id % 5)
         WHEN 0 THEN 'Promotion of renewable energy sources'
