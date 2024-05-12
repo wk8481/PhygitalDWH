@@ -103,11 +103,11 @@ SELECT
     series_id % 2 = 0, -- is_circular
     series_id, -- project_id
     CASE 
-        WHEN start_time + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN start_time - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) 
-        ELSE start_time + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from start_time)
+        WHEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) 
+        ELSE CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
     CASE 
         WHEN EXTRACT(HOUR FROM CURRENT_TIMESTAMP) BETWEEN 9 AND 20 THEN CURRENT_TIMESTAMP - RANDOM() * INTERVAL '12 hours' -- Start time within typical working hours (9 AM - 9 PM)
-        ELSE CURRENT_TIMESTAMP - RANDOM() * INTERVAL '12 hours' END, -- Start time randomly distributed throughout the past 12 hours
+        ELSE CURRENT_TIMESTAMP - RANDOM() * INTERVAL '12 hours' END, -- Start time randomly distributed within the past 12 hours
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
         WHEN 1 THEN 'Innovation Summit ' || series_id
