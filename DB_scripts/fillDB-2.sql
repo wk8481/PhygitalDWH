@@ -1,52 +1,56 @@
--- Insert projects
--- Sample projects
 INSERT INTO public.project (active, avg_time_spent, total_participants, background_color_hex, font_name, logo_path, name)
-VALUES
-    (true, 30, 50, '#5BC0EB', 'Helvetica', '/logos/sustainable.png', 'Sustainable Development'),
-    (true, 25, 45, '#FF6B6B', 'Times New Roman', '/logos/innovation.png', 'Innovation'),
-    (true, 35, 60, '#F0C987', 'Verdana', '/logos/art.png', 'Art & Culture'),
-    (true, 40, 55, '#B08BEB', 'Calibri', '/logos/education.png', 'Education'),
-    (true, 50, 70, '#7ED321', 'Arial', '/logos/healthcare.png', 'Healthcare'),
-    (true, 32, 48, '#5BC0EB', 'Helvetica', '/logos/sustainable.png', 'Sustainable Development'),
-    (true, 27, 52, '#FF6B6B', 'Times New Roman', '/logos/innovation.png', 'Innovation'),
-    (true, 37, 63, '#F0C987', 'Verdana', '/logos/art.png', 'Art & Culture'),
-    (true, 42, 58, '#B08BEB', 'Calibri', '/logos/education.png', 'Education'),
-    (true, 52, 73, '#7ED321', 'Arial', '/logos/healthcare.png', 'Healthcare'),
-    (true, 31, 49, '#5BC0EB', 'Helvetica', '/logos/sustainable.png', 'Sustainable Development'),
-    (true, 26, 53, '#FF6B6B', 'Times New Roman', '/logos/innovation.png', 'Innovation'),
-    (true, 36, 62, '#F0C987', 'Verdana', '/logos/art.png', 'Art & Culture'),
-    (true, 41, 56, '#B08BEB', 'Calibri', '/logos/education.png', 'Education'),
-    (true, 51, 71, '#7ED321', 'Arial', '/logos/healthcare.png', 'Healthcare'),
-    (true, 33, 47, '#5BC0EB', 'Helvetica', '/logos/sustainable.png', 'Sustainable Development'),
-    (true, 28, 51, '#FF6B6B', 'Times New Roman', '/logos/innovation.png', 'Innovation'),
-    (true, 38, 64, '#F0C987', 'Verdana', '/logos/art.png', 'Art & Culture'),
-    (true, 43, 57, '#B08BEB', 'Calibri', '/logos/education.png', 'Education'),
-    (true, 53, 74, '#7ED321', 'Arial', '/logos/healthcare.png', 'Healthcare');
+SELECT
+    (series_id % 2) = 0, -- active
+    ROUND(RANDOM() * 40 + 20), -- avg_time_spent (random value between 20 and 60)
+    FLOOR(RANDOM() * 100) + 1, -- total_participants (random value between 1 and 100)
+    CASE (series_id % 5)
+        WHEN 0 THEN '#5BC0EB'
+        WHEN 1 THEN '#FF6B6B'
+        WHEN 2 THEN '#F0C987'
+        WHEN 3 THEN '#B08BEB'
+        ELSE '#7ED321' -- A default color if more examples are added
+        END, -- background_color_hex
+    CASE (series_id % 5)
+        WHEN 0 THEN 'Helvetica'
+        WHEN 1 THEN 'Times New Roman'
+        WHEN 2 THEN 'Verdana'
+        WHEN 3 THEN 'Calibri'
+        ELSE 'Arial' -- A default font name if more examples are added
+        END, -- font_name
+    CASE (series_id % 5)
+        WHEN 0 THEN '/logos/sustainable.png'
+        WHEN 1 THEN '/logos/innovation.png'
+        WHEN 2 THEN '/logos/art.png'
+        WHEN 3 THEN '/logos/education.png'
+        ELSE '/logos/healthcare.png' -- A default logo path if more examples are added
+        END, -- logo_path
+    'Project ' || series_id || ' ' ||
+    (SELECT array_to_string(array_agg(words ORDER BY random()), ' ')
+     FROM (VALUES ('Green'), ('Technology'), ('Innovation'), ('Community'), ('Education'), ('Healthcare'), ('Art'), ('Culture')) AS t(words)
+     LIMIT 3) -- random project name
+FROM generate_series(1, 1000) AS series_id;
+
+
 
 -- Sample themes
--- Sample themes
 INSERT INTO public.theme (project_id, information, name)
-VALUES
-    (1, 'Community-driven projects aimed at sustainable development.', 'Sustainable Development 1'),
-    (2, 'Bringing innovation to various sectors for societal progress.', 'Innovation 2'),
-    (3, 'Promoting cultural exchange and diversity through art.', 'Art & Culture 3'),
-    (4, 'Enhancing educational opportunities for all ages.', 'Education 4'),
-    (5, 'Improving healthcare accessibility and services.', 'Healthcare 5'),
-    (6, 'Community-driven projects aimed at sustainable development.', 'Sustainable Development 6'),
-    (7, 'Bringing innovation to various sectors for societal progress.', 'Innovation 7'),
-    (8, 'Promoting cultural exchange and diversity through art.', 'Art & Culture 8'),
-    (9, 'Enhancing educational opportunities for all ages.', 'Education 9'),
-    (10, 'Improving healthcare accessibility and services.', 'Healthcare 10'),
-    (11, 'Community-driven projects aimed at sustainable development.', 'Sustainable Development 11'),
-    (12, 'Bringing innovation to various sectors for societal progress.', 'Innovation 12'),
-    (13, 'Promoting cultural exchange and diversity through art.', 'Art & Culture 13'),
-    (14, 'Enhancing educational opportunities for all ages.', 'Education 14'),
-    (15, 'Improving healthcare accessibility and services.', 'Healthcare 15'),
-    (16, 'Community-driven projects aimed at sustainable development.', 'Sustainable Development 16'),
-    (17, 'Bringing innovation to various sectors for societal progress.', 'Innovation 17'),
-    (18, 'Promoting cultural exchange and diversity through art.', 'Art & Culture 18'),
-    (19, 'Enhancing educational opportunities for all ages.', 'Education 19'),
-    (20, 'Improving healthcare accessibility and services.', 'Healthcare 20');
+SELECT
+    (series_id % 1000) + 1, -- project_id
+    CASE (series_id % 5)
+        WHEN 0 THEN 'Community-driven projects aimed at sustainable development.'
+        WHEN 1 THEN 'Bringing innovation to various sectors for societal progress.'
+        WHEN 2 THEN 'Promoting cultural exchange and diversity through art.'
+        WHEN 3 THEN 'Enhancing educational opportunities for all ages.'
+        ELSE 'Improving healthcare accessibility and services.'
+        END, -- information
+    CASE (series_id % 5)
+        WHEN 0 THEN 'Sustainable Development ' || series_id
+        WHEN 1 THEN 'Innovation ' || series_id
+        WHEN 2 THEN 'Art & Culture ' || series_id
+        WHEN 3 THEN 'Education ' || series_id
+        ELSE 'Healthcare ' || series_id
+        END -- name
+FROM generate_series(1, 1000) AS series_id;
 
 -- sample data for location
 INSERT INTO public.location (street_number, city, province, street)
@@ -76,15 +80,14 @@ SELECT
         WHEN 8 THEN 'Avenue Louise'
         ELSE 'Chaussee de Wavre'
         END || ' ' || (series_id % 1000) + 1 -- random street name with series_id appended
-FROM generate_series(1, 50) AS series_id;
+FROM generate_series(1, 1000) AS series_id;
 
 --installation
 
---installation
 INSERT INTO public.installation (is_running, location_id, name)
 SELECT
     series_id % 2 = 0, -- is_running
-    (series_id % 50) + 1 as location_id, -- location_id
+    series_id, -- location_id
     CASE (series_id % 5)
         WHEN 0 THEN 'Brussels Workshop Center'
         WHEN 1 THEN 'Antwerp Innovation Hub'
@@ -92,33 +95,16 @@ SELECT
         WHEN 3 THEN 'Liege Education Hub'
         ELSE 'Bruges Healthcare Center'
         END || ' ' || series_id -- Appending series_id to ensure uniqueness
-FROM generate_series(1, 400) AS series_id;
-
-
-
---installation
-INSERT INTO public.installation (is_running, location_id, name)
-SELECT
-    series_id % 2 = 0, -- is_running
-    (series_id % 50) + 1 as location_id, -- location_id
-    CASE (series_id % 5)
-        WHEN 0 THEN 'Brussels Workshop Center'
-        WHEN 1 THEN 'Antwerp Innovation Hub'
-        WHEN 2 THEN 'Ghent Cultural Center'
-        WHEN 3 THEN 'Liege Education Hub'
-        ELSE 'Bruges Healthcare Center'
-        END || ' ' || series_id -- Appending series_id to ensure uniqueness
-FROM generate_series(1, 400) AS series_id;
+FROM generate_series(1, 1000) AS series_id;
 
 INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
 SELECT
-    installation.id, -- installation_id
+    series_id, -- installation_id
     series_id % 2 = 0, -- is_circular
     series_id, -- project_id
     CASE
         WHEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30))
-        ELSE CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30))
-    END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
+        ELSE CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
     CURRENT_TIMESTAMP - INTERVAL '1 year' - RANDOM() * INTERVAL '365 days' - RANDOM() * INTERVAL '12 hours' + RANDOM() * INTERVAL '12 hours', -- Start time within the past year, randomly distributed throughout the day
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
@@ -127,14 +113,14 @@ SELECT
         WHEN 3 THEN 'Educational Access Seminar ' || series_id
         ELSE 'Healthcare Access Conference ' || series_id
     END -- name
-FROM generate_series(1, 1000) AS series_id
-JOIN public.installation ON series_id = public.installation.id; -- Join with installation table to ensure valid installation_id
+FROM generate_series(1, 1000) AS series_id;
+
 
 --subtheme
 INSERT INTO public.sub_theme (current_index, flow_id, is_visible, information, name)
 SELECT
     series_id % 10, -- current_index
-    FLOOR((series_id - 1) / 20) + 1, -- flow_id (assuming each flow contains 20 subthemes)
+    series_id, -- flow_id
     series_id % 2 = 0, -- is_visible
     CASE (series_id % 5)
         WHEN 0 THEN 'Promotion of renewable energy sources'
@@ -155,7 +141,7 @@ FROM generate_series(1, 1000) AS series_id;
 --flow_sub_themes
 -- Inserting into public.flow with reasonable timestamp ranges
 INSERT INTO public.flow_sub_themes (flow_id, sub_themes_id)
-SELECT 
+SELECT
     series_id, -- flow_id
     series_id -- sub_themes_id
 FROM generate_series(1, 1000) AS series_id;
@@ -213,4 +199,5 @@ SELECT
      WHERE sub_theme_id = series_id % 1000 + 1
      LIMIT 1) AS questions
 FROM generate_series(1, 1000) AS series_id;
+
 
