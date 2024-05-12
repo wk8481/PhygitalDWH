@@ -95,14 +95,30 @@ SELECT
 FROM generate_series(1, 400) AS series_id;
 
 
+
+--installation
+INSERT INTO public.installation (is_running, location_id, name)
+SELECT
+    series_id % 2 = 0, -- is_running
+    (series_id % 50) + 1 as location_id, -- location_id
+    CASE (series_id % 5)
+        WHEN 0 THEN 'Brussels Workshop Center'
+        WHEN 1 THEN 'Antwerp Innovation Hub'
+        WHEN 2 THEN 'Ghent Cultural Center'
+        WHEN 3 THEN 'Liege Education Hub'
+        ELSE 'Bruges Healthcare Center'
+        END || ' ' || series_id -- Appending series_id to ensure uniqueness
+FROM generate_series(1, 400) AS series_id;
+
 INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
 SELECT
-    series_id, -- installation_id
+    installation.id, -- installation_id
     series_id % 2 = 0, -- is_circular
     series_id, -- project_id
-    CASE 
-        WHEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) 
-        ELSE CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
+    CASE
+        WHEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30))
+        ELSE CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30))
+    END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
     CURRENT_TIMESTAMP - INTERVAL '1 year' - RANDOM() * INTERVAL '365 days' - RANDOM() * INTERVAL '12 hours' + RANDOM() * INTERVAL '12 hours', -- Start time within the past year, randomly distributed throughout the day
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
@@ -111,8 +127,8 @@ SELECT
         WHEN 3 THEN 'Educational Access Seminar ' || series_id
         ELSE 'Healthcare Access Conference ' || series_id
     END -- name
-FROM generate_series(1, 1000) AS series_id;
-
+FROM generate_series(1, 1000) AS series_id
+JOIN public.installation ON series_id = public.installation.id; -- Join with installation table to ensure valid installation_id
 
 --subtheme
 INSERT INTO public.sub_theme (current_index, flow_id, is_visible, information, name)
