@@ -1,3 +1,4 @@
+-- Insert projects
 INSERT INTO public.project (active, avg_time_spent, total_participants, background_color_hex, font_name, logo_path, name)
 SELECT
     (series_id % 2) = 0, -- active
@@ -30,12 +31,10 @@ SELECT
      LIMIT 3) -- random project name
 FROM generate_series(1, 20) AS series_id;
 
-
-
 -- Sample themes
 INSERT INTO public.theme (project_id, information, name)
 SELECT
-    (series_id % 20) + 1, -- project_id
+    series_id, -- project_id
     CASE (series_id % 5)
         WHEN 0 THEN 'Community-driven projects aimed at sustainable development.'
         WHEN 1 THEN 'Bringing innovation to various sectors for societal progress.'
