@@ -88,7 +88,7 @@ FROM generate_series(1, 50) AS series_id;
 INSERT INTO public.installation (is_running, location_id, name)
 SELECT
     series_id % 2 = 0, -- is_running
-    location_id, -- location_id
+    (series_id % 50) + 1 as location_id, -- location_id
     CASE (series_id % 5)
         WHEN 0 THEN 'Brussels Workshop Center'
         WHEN 1 THEN 'Antwerp Innovation Hub'
@@ -96,12 +96,7 @@ SELECT
         WHEN 3 THEN 'Liege Education Hub'
         ELSE 'Bruges Healthcare Center'
         END || ' ' || series_id -- Appending series_id to ensure uniqueness
-FROM (
-    SELECT 
-        (series_id % 50) + 1 as location_id, -- Distribute installations across 50 locations
-        generate_series(1, 400) AS series_id -- Total installations
-    FROM generate_series(1, 400) -- Total installations
-) AS subquery;
+FROM generate_series(1, 400) AS series_id;
 
 
 INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
