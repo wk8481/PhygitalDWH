@@ -97,21 +97,24 @@ SELECT
         END || ' ' || series_id -- Appending series_id to ensure uniqueness
 FROM generate_series(1, 1000) AS series_id;
 
---flow
 INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
 SELECT
     series_id, -- installation_id
     series_id % 2 = 0, -- is_circular
     series_id, -- project_id
-    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' * RANDOM(), -- end_time
-    CURRENT_TIMESTAMP - RANDOM() * INTERVAL '730 days' * RANDOM(), -- start_time (twice as far in the past as end_time)
+    CASE 
+        WHEN start_time + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN start_time - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) 
+        ELSE start_time + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from start_time)
+    CASE 
+        WHEN EXTRACT(HOUR FROM start_time) BETWEEN 9 AND 20 THEN start_time - RANDOM() * INTERVAL '12 hours' -- Start time within typical working hours (9 AM - 9 PM)
+        ELSE CURRENT_TIMESTAMP - RANDOM() * INTERVAL '365 days' END, -- Start time randomly distributed throughout the past year
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
         WHEN 1 THEN 'Innovation Summit ' || series_id
         WHEN 2 THEN 'Cultural Exchange Exhibition ' || series_id
         WHEN 3 THEN 'Educational Access Seminar ' || series_id
         ELSE 'Healthcare Access Conference ' || series_id
-        END -- name
+    END -- name
 FROM generate_series(1, 1000) AS series_id;
 
 
