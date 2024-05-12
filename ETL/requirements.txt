@@ -1,0 +1,3 @@
+pandas
+tqdm
+psycopg2
