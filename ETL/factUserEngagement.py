@@ -26,7 +26,7 @@ def create_facttable(cursor_dwh):
 def get_user_engagement(cursor_op):
     sql = """
     SELECT
-    DATE_TRUNC('day', f.start_time) AS flow_day,
+    DATE_TRUNC('hour', f.start_time) AS flow_day,
     t.name AS theme_name,
     l.city,
     l.province,
