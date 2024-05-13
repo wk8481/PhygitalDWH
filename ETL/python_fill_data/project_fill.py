@@ -35,18 +35,18 @@ def random_font_name():
     font_name = random.choice(['Arial', 'Times New Roman', 'Courier New', 'Verdana', 'Comic Sans MS'])
     return font_name
 
-def random_project_name():
+def random_project_name(amount):
     """Return a random project name. cannot repeat the same project name."""
 
-    project_name = random.choice(['Project A', 'Project B', 'Project C', 'Project D', 'Project E'])
+    project_name = 'Project ' + str(amount)
     return project_name
 
-def random_project():
+def random_project(amount):
     active_or_not = random_true_false(0.8)
     time = random_average_time(1, 60)
     random_hex = random_hex_color()
     random_font = random_font_name()
-    project_name = random_project_name()
+    project_name = random_project_name(amount)
 
     project = [active_or_not, time, random.randint(1, 30), random_hex, random_font, 'path/to/logo.', project_name]
     return project
@@ -71,7 +71,6 @@ def fill_project_table(cursor, amount):
     """
 
     cursor.execute(sql, (amount[0], amount[1], amount[2], amount[3], amount[4], amount[5], amount[6]))
-    return cursor.execute("SELECT currval(pg_get_serial_sequence('public.project', 'id'));").fetchone()[0]
 
 def get_project_id(cursor):
     sql = """
@@ -90,7 +89,21 @@ def main():
 
     print('Filling the project and theme tables with random data...')
 
+    amount = 0
 
+    with tqdm(total=input_amount) as pbar:
+        while amount < input_amount:
+            project = random_project(amount)
+            project_name = project[6]
+
+            if check_project_table(cursor, project_name) == []:
+                fill_project_table(cursor, project)
+                conn.commit()
+
+            pbar.update(1)
+            amount += 1
+
+    print('project table filled with random data.')
 
     cursor.close()
     conn.close()
