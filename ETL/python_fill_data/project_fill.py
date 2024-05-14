@@ -82,32 +82,37 @@ def get_project_id(cursor):
     return result
 
 def main():
-    conn = establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
-    cursor = conn.cursor()
+    try:
+        conn = establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
+        cursor = conn.cursor()
 
-    input_amount = int(input('Enter the amount of rows to fill the project and theme tables with: '))
+        input_amount = int(input('Enter the amount of rows to fill the project and theme tables with: '))
 
-    print('Filling the project and theme tables with random data...')
 
-    amount = 0
+        print('Filling the project and theme tables with random data...')
 
-    with tqdm(total=input_amount) as pbar:
-        while amount < input_amount:
-            project = random_project(amount)
-            project_name = project[6]
+        amount = 0
 
-            if check_project_table(cursor, project_name) == []:
-                fill_project_table(cursor, project)
-                conn.commit()
+        with tqdm(total=input_amount) as pbar:
+            while amount < input_amount:
+                project = random_project(amount)
+                project_name = project[6]
 
-            pbar.update(1)
-            amount += 1
+                if check_project_table(cursor, project_name) == []:
+                    fill_project_table(cursor, project)
+                    conn.commit()
 
-    print('project table filled with random data.')
+                pbar.update(1)
+                amount += 1
 
-    cursor.close()
-    conn.close()
+        print('project table filled with random data.')
+        print('amount of rows filled: ', amount)
 
+        cursor.close()
+        conn.close()
+
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     main()

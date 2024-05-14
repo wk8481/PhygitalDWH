@@ -14,10 +14,10 @@ def random_theme_info():
     theme_info = random.choice(['Theme Info A', 'Theme Info B', 'Theme Info C', 'Theme Info D', 'Theme Info E'])
     return theme_info
 
-def random_theme_name():
+def random_theme_name(amount):
     """Return a random theme name. cannot repeat the same theme name."""
 
-    theme_name = random.choice(['Theme A', 'Theme B', 'Theme C', 'Theme D', 'Theme E'])
+    theme_name = 'Theme ' + str(amount)
     return theme_name
 
 def get_project_id(cursor):
@@ -44,11 +44,11 @@ def fill_theme_table(cursor, amount, project_id):
     INSERT INTO PUBLIC.theme (project_id, name, information)
     VALUES (%s, %s, %s);
     """
-    cursor.execute(sql, (project_id, amount[1], amount[2]))
+    cursor.execute(sql, (project_id, amount[0], amount[1]))
 
-def random_theme():
+def random_theme(amount):
     theme_info = random_theme_info()
-    theme_name = random_theme_name()
+    theme_name = random_theme_name(amount)
 
     theme = [theme_name, theme_info]
     return theme
@@ -58,9 +58,26 @@ def main():
     conn = establish_connection(SERVER, DATABASE_OP, USERNAME, PASSWORD, PORT)
     cursor = conn.cursor()
 
-    input_amount = int(input('Enter the amount of rows to fill the project and theme tables with: '))
+#    input_amount = int(input('Enter the amount of rows to fill the project and theme tables with: '))
 
-    print('Filling the project and theme tables with random data...')
+    project_ids = get_project_id(cursor)
+    print(project_ids.__len__())
+
+    filled_amount = 0
+
+    with tqdm(total=project_ids.__len__()) as pbar:
+        while filled_amount < project_ids.__len__():
+
+            amount = random_theme(filled_amount)
+            if check_theme_table(cursor, amount[0]) == []:
+                fill_theme_table(cursor, amount, project_ids[filled_amount])
+                conn.commit()
+
+            pbar.update(1)
+            filled_amount += 1
+
+    print('amount: ', filled_amount)
+
 
     cursor.close()
     conn.close()
@@ -68,4 +85,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
