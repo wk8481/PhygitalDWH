@@ -104,7 +104,7 @@ SELECT
     series_id, -- project_id
     CASE
         WHEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30))
-        ELSE CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
+        ELSE CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
     CURRENT_TIMESTAMP - INTERVAL '1 year' - RANDOM() * INTERVAL '365 days' - RANDOM() * INTERVAL '12 hours' + RANDOM() * INTERVAL '12 hours', -- Start time within the past year, randomly distributed throughout the day
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
@@ -148,56 +148,45 @@ FROM generate_series(1, 1000) AS series_id;
 
 
 
---increase amount of questions and answers:
--- Insert multiple questions for each theme
+-- Insert questions with random number of possible answers for each subtheme
 INSERT INTO public.question (is_visible, sub_theme_id, text, type)
 SELECT
     true AS is_visible,
-    series_id AS sub_theme_id,
-    CASE
-        WHEN (series_id % 5) = 0 THEN 'Question 1 for Subtheme ' || series_id
-        WHEN (series_id % 5) = 1 THEN 'Question 2 for Subtheme ' || series_id
-        WHEN (series_id % 5) = 2 THEN 'Question 3 for Subtheme ' || series_id
-        WHEN (series_id % 5) = 3 THEN 'Question 4 for Subtheme ' || series_id
-        ELSE 'Question 5 for Subtheme ' || series_id
-        END AS text,
+    sub_theme_id,
+    'Question ' || sub_theme_id || ' for Subtheme ' || series_id AS text,
     CASE (series_id % 4)
         WHEN 0 THEN 'SINGLE_CHOICE'
         WHEN 1 THEN 'MULTIPLE_CHOICE'
         WHEN 2 THEN 'RANGE'
         ELSE 'OPEN'
         END AS type
-FROM generate_series(1, 1000) AS series_id;
+FROM (
+    SELECT
+        generate_series(1, 1000) AS series_id,
+        (generate_series % 1000) + 1 AS sub_theme_id,
+        (random() * 5)::int + 1 AS num_questions -- Random number of questions per subtheme
+    FROM generate_series(1, 1000)
+) AS random_data
+CROSS JOIN LATERAL generate_series(1, num_questions);
 
--- Insert multiple possible answers for each question
+-- Insert multiple possible answers for each question with random number of answers
 INSERT INTO public.possible_answers (question_id, answer)
 SELECT
     series_id AS question_id,
-    CASE
-        WHEN (series_id % 20) = 0 THEN 'Answer 1 for Question ' || series_id
-        WHEN (series_id % 20) = 1 THEN 'Answer 2 for Question ' || series_id
-        WHEN (series_id % 20) = 2 THEN 'Answer 3 for Question ' || series_id
-        WHEN (series_id % 20) = 3 THEN 'Answer 4 for Question ' || series_id
-        ELSE 'Answer 5 for Question ' || series_id
-        END AS answer
-FROM generate_series(1, 1000) AS series_id;
+    'Answer ' || series_id AS answer
+FROM generate_series(1, 10000) AS series_id;
 
 -- Insert multiple answered questions for each subtheme
 -- Inserting into public.answer with reasonable timestamp ranges
 INSERT INTO public.answer (subtheme_id, timestamp, answers, questions)
 SELECT
-    series_id AS subtheme_id, -- Subtheme_id ranges from 1 to 1000
+    sub_theme_id AS subtheme_id,
     CURRENT_TIMESTAMP - INTERVAL '1' YEAR - (RANDOM() * INTERVAL '365 days'), -- Random timestamp within the past year
     (SELECT array_to_string(array_agg(answer ORDER BY random()), ', ')
      FROM (SELECT answer
            FROM public.possible_answers
-           WHERE question_id IN (SELECT id FROM public.question WHERE sub_theme_id = series_id % 1000 + 1)
+           WHERE question_id = question_id
            ORDER BY RANDOM()
-           LIMIT 3) AS t) AS answers,
-    (SELECT array_to_string(array_agg(text ORDER BY random()), ', ')
-     FROM public.question
-     WHERE sub_theme_id = series_id % 1000 + 1
-     LIMIT 1) AS questions
-FROM generate_series(1, 1000) AS series_id;
-
-
+           LIMIT (RANDOM() * 5)::int + 1) AS t) AS answers,
+    text AS questions
+FROM public.question
