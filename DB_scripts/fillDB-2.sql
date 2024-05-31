@@ -1,3 +1,4 @@
+-- Sample projects
 INSERT INTO public.project (active, avg_time_spent, total_participants, background_color_hex, font_name, logo_path, name)
 SELECT
     (series_id % 2) = 0, -- active
@@ -30,20 +31,18 @@ SELECT
      LIMIT 3) -- random project name
 FROM generate_series(1, 1000) AS series_id;
 
-
-
 -- Sample themes
 INSERT INTO public.theme (project_id, information, name)
 SELECT
-    (series_id % 1000) + 1, -- project_id
-    CASE (series_id % 5)
+    series_id, -- project_id
+    CASE ((series_id - 1) % 5)
         WHEN 0 THEN 'Community-driven projects aimed at sustainable development.'
         WHEN 1 THEN 'Bringing innovation to various sectors for societal progress.'
         WHEN 2 THEN 'Promoting cultural exchange and diversity through art.'
         WHEN 3 THEN 'Enhancing educational opportunities for all ages.'
         ELSE 'Improving healthcare accessibility and services.'
         END, -- information
-    CASE (series_id % 5)
+    CASE ((series_id - 1) % 5)
         WHEN 0 THEN 'Sustainable Development ' || series_id
         WHEN 1 THEN 'Innovation ' || series_id
         WHEN 2 THEN 'Art & Culture ' || series_id
@@ -51,6 +50,7 @@ SELECT
         ELSE 'Healthcare ' || series_id
         END -- name
 FROM generate_series(1, 1000) AS series_id;
+
 
 -- sample data for location
 INSERT INTO public.location (street_number, city, province, street)
@@ -97,23 +97,27 @@ SELECT
         END || ' ' || series_id -- Appending series_id to ensure uniqueness
 FROM generate_series(1, 1000) AS series_id;
 
+-- Insert flows with corrected timestamp ranges to satisfy constraints
+-- Reset the sequence for the flow table to start from 1
+ALTER SEQUENCE public.flow_id_seq RESTART WITH 1;
+
+-- Now you can insert flows with corrected timestamp ranges
 INSERT INTO public.flow (installation_id, is_circular, project_id, end_time, start_time, name)
 SELECT
     series_id, -- installation_id
     series_id % 2 = 0, -- is_circular
     series_id, -- project_id
-    CASE
-        WHEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) > CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30))
-        ELSE CURRENT_TIMESTAMP + INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)) END, -- end_time (plus or minus 1-30 minutes from current_timestamp)
-    CURRENT_TIMESTAMP - INTERVAL '1 year' - RANDOM() * INTERVAL '365 days' - RANDOM() * INTERVAL '12 hours' + RANDOM() * INTERVAL '12 hours', -- Start time within the past year, randomly distributed throughout the day
+    CURRENT_TIMESTAMP - INTERVAL '1 minute' * (1 + FLOOR(RANDOM() * 30)), -- end_time (up to 30 minutes before the current timestamp)
+    CURRENT_TIMESTAMP - INTERVAL '1 year' - RANDOM() * INTERVAL '365 days' + RANDOM() * INTERVAL '12 hours', -- start_time within the past year, before end_time
     CASE (series_id % 5)
         WHEN 0 THEN 'Renewable Energy Workshop ' || series_id
         WHEN 1 THEN 'Innovation Summit ' || series_id
         WHEN 2 THEN 'Cultural Exchange Exhibition ' || series_id
         WHEN 3 THEN 'Educational Access Seminar ' || series_id
         ELSE 'Healthcare Access Conference ' || series_id
-    END -- name
+        END -- name
 FROM generate_series(1, 1000) AS series_id;
+
 
 
 --subtheme
@@ -148,12 +152,17 @@ FROM generate_series(1, 1000) AS series_id;
 
 
 
--- Insert questions with random number of possible answers for each subtheme
+truncate question cascade
+-- Insert questions with a maximum of 10 questions per subtheme
+-- Insert questions with a random distribution across subthemes, up to a total of 1000 questions
+-- Insert questions with a maximum of 10 questions per subtheme
+Alter sequence question_id_seq restart with 1;
+
 INSERT INTO public.question (is_visible, sub_theme_id, text, type)
 SELECT
     true AS is_visible,
     sub_theme_id,
-    'Question ' || sub_theme_id || ' for Subtheme ' || series_id AS text,
+    'Question ' || row_number() OVER (PARTITION BY sub_theme_id) || ' for Subtheme ' || sub_theme_id AS text,
     CASE (series_id % 4)
         WHEN 0 THEN 'SINGLE_CHOICE'
         WHEN 1 THEN 'MULTIPLE_CHOICE'
@@ -161,32 +170,110 @@ SELECT
         ELSE 'OPEN'
         END AS type
 FROM (
-    SELECT
-        generate_series(1, 1000) AS series_id,
-        (generate_series % 1000) + 1 AS sub_theme_id,
-        (random() * 5)::int + 1 AS num_questions -- Random number of questions per subtheme
-    FROM generate_series(1, 1000)
-) AS random_data
-CROSS JOIN LATERAL generate_series(1, num_questions);
+         SELECT
+             generate_series(1, 500) AS series_id,
+             (random() * 40)::int + 1 AS sub_theme_id -- Randomly distribute questions across subthemes
+     ) AS random_data;
 
--- Insert multiple possible answers for each question with random number of answers
+
+truncate possible_answers cascade
+-- Insert multiple possible answers for each question with a maximum of 20 possible answers per question
+
+alter sequence possible_answers_id_seq restart with 1;
+
+-- Generate possible answers
+-- Generate possible answers
+CREATE TEMPORARY TABLE temp_possible_answers AS
+SELECT
+    'Answer ' || generate_series AS answer
+FROM
+    generate_series(1, 200);
+
+-- Assign possible answers to questions randomly, limiting to 50 questions
 INSERT INTO public.possible_answers (question_id, answer)
 SELECT
-    series_id AS question_id,
-    'Answer ' || series_id AS answer
-FROM generate_series(1, 10000) AS series_id;
+    q.id AS question_id,
+    pa.answer
+FROM
+    public.question q
+        CROSS JOIN LATERAL (
+        SELECT answer FROM temp_possible_answers ORDER BY random() LIMIT 5 -- Adjust the limit as needed
+        ) pa
+LIMIT 200; -- Limit the number of questions
 
--- Insert multiple answered questions for each subtheme
--- Inserting into public.answer with reasonable timestamp ranges
+-- Drop temporary table
+DROP TABLE IF EXISTS temp_possible_answers;
+
+
+
+
+
+
+
+
+
+-- Insert multiple answered questions for each subtheme with a limit
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+-- Inserting into public.answer with a maximum of 5 answered questions per subtheme
+truncate answer cascade
+
+-- Update the existing record with subtheme_id = 1
+-- Update the existing record with subtheme_id = 1
+-- Update the existing record with subtheme_id = 1
+-- Inserting into public.answer for existing subtheme_id = 1
+-- Inserting into public.answer for a different subtheme_id
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_idsINSERT INTO public.answer (subtheme_id, timestamp, answers, questions)
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a smaller dataset of subtheme_ids
+-- Inserting into public.answer with a larger dataset of subtheme_ids and diverse dummy answers
+
+alter sequence answer_id_seq restart with 1;
+
+
 INSERT INTO public.answer (subtheme_id, timestamp, answers, questions)
 SELECT
-    sub_theme_id AS subtheme_id,
+    series_id AS subtheme_id, -- Subtheme_id ranges from 1 to 500
     CURRENT_TIMESTAMP - INTERVAL '1' YEAR - (RANDOM() * INTERVAL '365 days'), -- Random timestamp within the past year
-    (SELECT array_to_string(array_agg(answer ORDER BY random()), ', ')
-     FROM (SELECT answer
-           FROM public.possible_answers
-           WHERE question_id = question_id
-           ORDER BY RANDOM()
-           LIMIT (RANDOM() * 5)::int + 1) AS t) AS answers,
-    text AS questions
-FROM public.question
+    (SELECT
+         CASE
+             WHEN q.type = 'RANGE' THEN 'Range answer for Question ' || q.id || ', Range: ' || (random() * 100)::int
+             WHEN q.type = 'OPEN' THEN 'Open answer for Question ' || q.id || ', Length: ' || (random() * 50)::int
+             WHEN q.type = 'MULTIPLE_CHOICE' THEN 'Option ' || num || ' for Question ' || q.id
+             WHEN q.type = 'SINGLE_CHOICE' THEN 'Option ' || series_id || ' for Question ' || q.id
+             ELSE 'No answer for Question ' || q.id
+             END
+     FROM (
+              SELECT generate_series(1, 5) AS num
+          ) AS dummy,
+          LATERAL (
+              SELECT id, type
+              FROM public.question
+              WHERE sub_theme_id = series_id % 500 + 1
+              ORDER BY RANDOM() -- Randomly select a question for each type
+              LIMIT 1
+              ) AS q
+     LIMIT 1) AS answers,
+    (SELECT text
+     FROM public.question
+     WHERE sub_theme_id = series_id % 500 + 1
+     ORDER BY RANDOM() -- Randomly select a question
+     LIMIT 1) AS questions
+FROM generate_series(1, 500) AS series_id
+LIMIT 40; -- Limit the number of rows inserted to 50
+
