@@ -26,15 +26,27 @@ with open(insert_data_sql_file_path, 'w') as insert_data_sql_file:
     for table in tables:
         table_name = table[0]
 
-        # Export table data to insert_data.sql
+        # Get column names
         cur.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table_name}'")
         columns = cur.fetchall()
         column_names = ', '.join([col[0] for col in columns])
 
-        insert_data_sql_file.write(f"INSERT INTO {table_name} ({column_names}) VALUES\n")
+        # Fetch table data
+        cur.execute(f"SELECT * FROM {table_name}")
+        rows = cur.fetchall()
 
-        cur.copy_expert(f"COPY {table_name} TO STDOUT WITH CSV HEADER", insert_data_sql_file)
-        insert_data_sql_file.write(f"\n\n")
+        # Write insert statements to the file
+        if rows:
+            insert_data_sql_file.write(f"INSERT INTO {table_name} ({column_names}) VALUES\n")
+            for i, row in enumerate(rows):
+                values = ', '.join(
+                    ["'{}'".format(str(value).replace("'", "''")) if value is not None else 'NULL' for value in row]
+                )
+                if i < len(rows) - 1:
+                    insert_data_sql_file.write(f"({values}),\n")
+                else:
+                    insert_data_sql_file.write(f"({values});\n")
+            insert_data_sql_file.write("\n")
 
 # Close cursor and connection
 cur.close()
