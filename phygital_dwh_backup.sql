@@ -40,7 +40,6 @@ CREATE TABLE public.dimday (
 );
 
 
-ALTER TABLE public.dimday OWNER TO postgres;
 
 --
 -- Name: dimday_datedim_sk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -55,7 +54,6 @@ CREATE SEQUENCE public.dimday_datedim_sk_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.dimday_datedim_sk_seq OWNER TO postgres;
 
 --
 -- Name: dimday_datedim_sk_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -74,7 +72,6 @@ CREATE TABLE public.dimflow (
 );
 
 
-ALTER TABLE public.dimflow OWNER TO postgres;
 
 --
 -- Name: dimflow_flowdim_sk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -89,7 +86,6 @@ CREATE SEQUENCE public.dimflow_flowdim_sk_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.dimflow_flowdim_sk_seq OWNER TO postgres;
 
 --
 -- Name: dimflow_flowdim_sk_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -111,7 +107,6 @@ CREATE TABLE public.dimlocation (
 );
 
 
-ALTER TABLE public.dimlocation OWNER TO postgres;
 
 --
 -- Name: dimlocation_locationdim_sk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -126,7 +121,6 @@ CREATE SEQUENCE public.dimlocation_locationdim_sk_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.dimlocation_locationdim_sk_seq OWNER TO postgres;
 
 --
 -- Name: dimlocation_locationdim_sk_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -150,7 +144,6 @@ CREATE TABLE public.factuserengagement (
 );
 
 
-ALTER TABLE public.factuserengagement OWNER TO postgres;
 
 --
 -- Name: factuserengagement_userengagement_sk_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -165,7 +158,6 @@ CREATE SEQUENCE public.factuserengagement_userengagement_sk_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.factuserengagement_userengagement_sk_seq OWNER TO postgres;
 
 --
 -- Name: factuserengagement_userengagement_sk_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
