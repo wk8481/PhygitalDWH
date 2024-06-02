@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS public.dimday AS SELECT * FROM public.dimday WHERE 1=0;CREATE TABLE IF NOT EXISTS public.dimflow AS SELECT * FROM public.dimflow WHERE 1=0;CREATE TABLE IF NOT EXISTS public.dimlocation AS SELECT * FROM public.dimlocation WHERE 1=0;CREATE TABLE IF NOT EXISTS public.factuserengagement AS SELECT * FROM public.factuserengagement WHERE 1=0;
