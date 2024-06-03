@@ -1,0 +1,90 @@
+
+{
+  workbooks(filter: {name: "integration4"}) {
+    name
+    luid
+    projectName
+    owner {
+      name
+      username
+      email
+    }
+    views {
+      name
+      luid
+      path
+      createdAt
+      index
+      referencedByMetrics {
+        name
+        id
+        description
+      }
+    }
+    embeddedDatasources {
+      name
+      hasExtracts
+      extractLastRefreshTime
+      upstreamDatabases {
+        connectionType
+        name
+        tables{
+          name
+          id
+          description
+          tags{
+            flows {
+              id
+            }
+          }
+          contact {
+            id
+          }
+          columns{
+            name
+            luid
+            labels {
+              id
+            }
+            isNullable
+            description
+            remoteType
+            descriptionInherited {
+              assetId
+            }
+            downstreamFields{
+              name
+              description
+              isHidden
+              referencedByFields{
+                fields{
+                  __typename
+                }
+              
+              }
+            }
+            
+          }
+        }
+        referencedByQueries {
+          name
+          id
+          description
+          isEmbedded
+        }
+        upstreamTablesConnection {
+          nodes {
+            name
+            id
+            labels {
+              id
+            }
+            description
+          }
+          totalCount
+        }
+      }
+    }
+  }
+}
+
