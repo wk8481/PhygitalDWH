@@ -1,0 +1,705 @@
+
+{
+  "data": {
+    "workbooks": [
+      {
+        "name": "integration4",
+        "luid": "89677762-7530-4f6e-86ad-62bc8424bcba",
+        "projectName": "default",
+        "owner": {
+          "name": "William Kasasa",
+          "username": "william.kasasa@student.kdg.be",
+          "email": "william.kasasa@student.kdg.be"
+        },
+        "views": [
+          {
+            "name": "Sheet 3",
+            "luid": "f6b8d154-2337-4819-9354-d85c03276406",
+            "path": "integration4/Sheet3",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Dashboard 1",
+            "luid": "fd8cadf3-7c0e-44f0-af41-33a65b922ae6",
+            "path": "integration4/Dashboard1",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Sheet 8",
+            "luid": "152ec1bb-5a09-4844-95ff-3ce2191836ad",
+            "path": "integration4/Sheet8",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Flows in locations",
+            "luid": "3f74c50b-485b-4511-9723-58e85e0cc7ea",
+            "path": "integration4/Flowsinlocations",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Sheet 9",
+            "luid": "db4c3486-21b7-43d3-94cc-62deab994e63",
+            "path": "integration4/Sheet9",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Story 1",
+            "luid": "af4b3fef-5ed5-4b7d-bf2c-1f2113a75116",
+            "path": "integration4/Story1",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Sheet 5",
+            "luid": "bbd70de2-2910-43e7-b76a-679fc8abb695",
+            "path": "integration4/Sheet5",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Sheet 2",
+            "luid": "7bfd634a-70f8-4523-8f52-359bf9f65bac",
+            "path": "integration4/Sheet2",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Flows during hours of the day",
+            "luid": "3b353e3e-ce26-4e0f-9377-9a2787aee539",
+            "path": "integration4/Flowsduringhoursoftheday",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Flows during seasons",
+            "luid": "a49d5071-19de-4466-b8f4-cd4e5104a9ad",
+            "path": "integration4/Flowsduringseasons",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          },
+          {
+            "name": "Sheet 4",
+            "luid": "fd263593-e74b-48ea-ba5e-550238b4afba",
+            "path": "integration4/Sheet4",
+            "createdAt": "2024-06-02T21:08:45Z",
+            "index": null,
+            "referencedByMetrics": []
+          }
+        ],
+        "embeddedDatasources": [
+          {
+            "name": "userengagement+ (phygital_dwh)",
+            "hasExtracts": false,
+            "extractLastRefreshTime": null,
+            "upstreamDatabases": [
+              {
+                "connectionType": "postgres",
+                "name": "phygital_dwh",
+                "tables": [
+                  {
+                    "name": "factuserengagement",
+                    "id": "26f3cf68-1148-44a7-a4b1-0b50ef9eb6d2",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": [
+                      {
+                        "name": "flowdim_sk",
+                        "luid": "86335c69-9e4b-43ca-8281-d9b6ca8779c1",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Flowdim Sk",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "userengagement_sk",
+                        "luid": "a091be53-8670-470c-beb0-17c9febc341e",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Userengagement Sk",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "locationdim_sk",
+                        "luid": "ae5952df-f68b-4d13-b82c-2ddc05532eb8",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Locationdim Sk",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "numberofansweredquestion",
+                        "luid": "d20ad3da-44ef-4140-9936-b82a4f054c98",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Numberofansweredquestion",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "daydim_sk",
+                        "luid": "ae392613-4725-4eb9-906d-798d2e79c7dd",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Daydim Sk",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "numberofquestions",
+                        "luid": "a24e9a0d-18ff-487c-9654-0c3ea5b5873b",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Numberofquestions",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "duration",
+                        "luid": "13006810-c9c6-431d-aec0-5d7f7f5418c4",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Duration",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": [
+                              {
+                                "fields": [
+                                  {
+                                    "__typename": "ColumnField"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "name": "Duration (bin)",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "dimFlow",
+                    "id": "6214108e-2263-596a-1c1d-109ab680b64f",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": []
+                  },
+                  {
+                    "name": "dimLocation",
+                    "id": "898153f4-410c-db40-d152-6b94637a169d",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": []
+                  },
+                  {
+                    "name": "dimday",
+                    "id": "8d260093-9e57-b110-9cfa-284e5fa272ca",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": [
+                      {
+                        "name": "quarter",
+                        "luid": "41707f86-e159-4cab-bc3f-03d4666c6c4a",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Quarter",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "dayofmonth",
+                        "luid": "4631e00e-199c-415f-b5ca-bd9a13fc98fa",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Dayofmonth",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "schoolholiday",
+                        "luid": "fe5ea3eb-c9ce-440a-be58-90c8ca8fa4c2",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "BOOL",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Schoolholiday",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "month",
+                        "luid": "5de6e4d3-442a-4f86-b646-abce8220ebe3",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Month",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "date",
+                        "luid": "f430a27b-3fa6-4ccd-b8ba-d047d3c34f8a",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "DBTIMESTAMP",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Date",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "hourofday",
+                        "luid": "0b3b8784-1572-4691-aefa-d9682bb50601",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Hourofday",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "dayofweek",
+                        "luid": "9a045805-1d34-4c68-a948-afb97f7962b9",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Dayofweek",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "year",
+                        "luid": "7bbf960b-14dd-4816-8c90-c016a05902f6",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Year",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "weekofyear",
+                        "luid": "5f7ee57c-a73d-4ad5-af2f-7b84da89afc9",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Weekofyear",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "dayofyear",
+                        "luid": "e5de1ebc-a403-4bbf-aba1-c887177f90fb",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Dayofyear",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "datedim_sk",
+                        "luid": "6f2e9796-9e61-4aff-b56e-744fa8d61cb3",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Datedim Sk",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "season",
+                        "luid": "817177fd-396d-49b8-bf95-b4ed32a1bcfe",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "STR",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Season",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "dimlocation",
+                    "id": "8de2acb1-7db9-fd97-f97f-a5a5328800f1",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": [
+                      {
+                        "name": "province",
+                        "luid": "543b6418-c57d-403f-b53d-b4d588fe070b",
+                        "labels": [],
+                        "isNullable": true,
+                        "description": "",
+                        "remoteType": "STR",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "province, city",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          },
+                          {
+                            "name": "Province",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": [
+                              {
+                                "fields": [
+                                  {
+                                    "__typename": "ColumnField"
+                                  },
+                                  {
+                                    "__typename": "ColumnField"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "street",
+                        "luid": "88a6bc8d-63df-4bf3-bcef-fa44533d48cb",
+                        "labels": [],
+                        "isNullable": true,
+                        "description": "",
+                        "remoteType": "STR",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Street",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "city",
+                        "luid": "4193b230-4f40-40f3-be43-0e8dddf8cdcf",
+                        "labels": [],
+                        "isNullable": true,
+                        "description": "",
+                        "remoteType": "STR",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "City",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": [
+                              {
+                                "fields": [
+                                  {
+                                    "__typename": "ColumnField"
+                                  },
+                                  {
+                                    "__typename": "ColumnField"
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "name": "province, city",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "locationdim_sk",
+                        "luid": "58958ea8-52a1-4140-b948-0d583f5287f3",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Locationdim Sk (Dimlocation)",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "street_number",
+                        "luid": "a6e8923b-35e0-4cb3-b6dd-b625c99c947b",
+                        "labels": [],
+                        "isNullable": true,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Street Number",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "factUserEngagement",
+                    "id": "967605a0-af6c-aa76-6134-1504e3187475",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": []
+                  },
+                  {
+                    "name": "dimflow",
+                    "id": "b9ce37a6-e4b2-d699-232f-b2ad444ed391",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": [
+                      {
+                        "name": "theme",
+                        "luid": "54086e32-c44c-47ff-98af-956774a45d39",
+                        "labels": [],
+                        "isNullable": true,
+                        "description": "",
+                        "remoteType": "STR",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Theme",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "flowdim_sk",
+                        "luid": "4e7817f0-886a-40f6-a649-5b46dcb6a9b3",
+                        "labels": [],
+                        "isNullable": false,
+                        "description": "",
+                        "remoteType": "I4",
+                        "descriptionInherited": [],
+                        "downstreamFields": [
+                          {
+                            "name": "Flowdim Sk (Dimflow)",
+                            "description": null,
+                            "isHidden": false,
+                            "referencedByFields": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "dimDay",
+                    "id": "f648247d-9c58-f737-69e2-283fe477235d",
+                    "description": "",
+                    "tags": [],
+                    "contact": null,
+                    "columns": []
+                  }
+                ],
+                "referencedByQueries": [
+                  {
+                    "name": "Custom SQL Query2",
+                    "id": "27893658-6f0a-f466-4cf7-a9e6495a3562",
+                    "description": null,
+                    "isEmbedded": null
+                  },
+                  {
+                    "name": "Custom SQL Query",
+                    "id": "71adbf95-6a63-22e0-0383-817982e4d9de",
+                    "description": null,
+                    "isEmbedded": null
+                  },
+                  {
+                    "name": "Custom SQL Query1",
+                    "id": "85e468ab-9d22-8ef8-8626-0547332f0af9",
+                    "description": null,
+                    "isEmbedded": null
+                  }
+                ],
+                "upstreamTablesConnection": {
+                  "nodes": [],
+                  "totalCount": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+
